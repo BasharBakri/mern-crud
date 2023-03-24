@@ -1,6 +1,7 @@
 const express = require('express');
-
+const UserSchema = require('../config/User');
 const router = express.Router();
+
 
 
 
@@ -8,6 +9,7 @@ const router = express.Router();
 //  @route GET /users
 
 const getUsers = (req, res, next) => {
+
   res.status(200).json({ success: true, msg: 'check get all users' });
 };
 
@@ -21,8 +23,22 @@ router.route('/').get(getUsers);
 // no duplicates allowed 
 // default 0 cash 0 credit
 
-const addUser = (req, res, next) => {
-  res.status(200).json({ success: true, msg: 'check add a user' });
+const addUser = async (req, res, next) => {
+  console.log(req.body);
+
+  try {
+    const addedUser = await UserSchema.create(req.body);
+
+    res.status(201).json({ // 201 means create a resource
+      success: true,
+      data: addedUser
+    });
+
+  } catch (error) {
+    res.status(400).json({ success: false });
+
+  }
+
 };
 
 
