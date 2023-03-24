@@ -8,11 +8,16 @@ const router = express.Router();
 // Get all users
 //  @route GET /users
 
-const getUsers = (req, res, next) => {
+const getUsers = async (req, res, next) => {
 
-  res.status(200).json({ success: true, msg: 'check get all users' });
+  try {
+    const users = await UserSchema.find();
+
+    res.status(200).json({ success: true, data: users });
+  } catch (error) {
+    res.status(400).json({ success: false });
+  }
 };
-
 
 router.route('/').get(getUsers);
 
@@ -27,7 +32,8 @@ const addUser = async (req, res, next) => {
   console.log(req.body);
 
   try {
-    const addedUser = await UserSchema.create(req.body);
+    const newUser = { ...req.body, cash: 0, credit: 0, isActive: true };
+    const addedUser = await UserSchema.create(newUser);
 
     res.status(201).json({ // 201 means create a resource
       success: true,
@@ -38,8 +44,10 @@ const addUser = async (req, res, next) => {
     res.status(400).json({ success: false });
 
   }
-
 };
+
+
+
 
 
 router.route('/').post(addUser);
@@ -49,8 +57,19 @@ router.route('/').post(addUser);
 //  @route get /users/:id
 // details: username, passportId, cash, credit, isActive, 
 
-const getOneUser = (req, res, next) => {
-  res.status(200).json({ success: true, msg: 'check view one user', middleware: req.secretMsg });
+const getOneUser = async (req, res, next) => {
+
+  try {
+    const user = await UserSchema.findById(req.params.id);
+    console.log(req.params.id);
+    if (!user) {
+      return res.status(404).json({ success: false });
+    }
+    res.status(200).json({ success: true, data: user });
+
+  } catch (error) {
+    res.status(400).send(error);
+  }
 };
 
 
@@ -61,11 +80,23 @@ router.route('/:id').get(getOneUser);
 //  @route get /users/:id/deposit
 // Only number and positive deposit, limit by 10k maybe?, 
 
-const depositOneUser = (req, res, next) => {
-  res.status(200).json({ success: true, msg: 'check deposit one user' });
+const depositOneUser = async (req, res, next) => {
+  try {
+    const user = await UserSchema.findById(req.params.id);
+    const amount = req.body.amount;
+
+    if (!user || typeof amount !== 'number' || amount < 1 || amount > 50000) {
+      return res.status(400).json({ success: false });
+    }
+
+
+    user.cash += amount;
+    await user.save();
+    res.status(200).json({ success: true, amount: amount, balance: user.cash, max: 50000 });
+  } catch (error) {
+    res.status(400).send(error);
+  }
 };
-
-
 router.route('/:id/deposit').put(depositOneUser);
 
 
@@ -73,10 +104,21 @@ router.route('/:id/deposit').put(depositOneUser);
 //  @route get /users/:id/addCredit
 // Only number and positive addCredit, limit by 10k maybe?
 
-const addCreditOneUser = (req, res, next) => {
-  res.status(200).json({ success: true, msg: 'check addCredit one user' });
-};
+const addCreditOneUser = async (req, res, next) => {
+  try {
+    const user = await UserSchema.findById(req.params.id);
+    const amount = req.body.amount;
+    if (!user || typeof amount !== 'number' || amount < 1 || amount > 50000) {
+      return res.status(400).json({ success: false });
+    }
 
+    user.credit += amount;
+    await user.save();
+    res.status(200).json({ success: true, amount: amount, credit: user.credit, max: 50000 });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
 
 router.route('/:id/addCredit').put(addCreditOneUser);
 
@@ -87,10 +129,33 @@ router.route('/:id/addCredit').put(addCreditOneUser);
 // Only number, remove cash first from user. If it reaches 0, then remove credit until it also reaches 0
 // prevent if both cash and credit are 0
 
-const withdrawMoneyOneUser = (req, res, next) => {
-  res.status(200).json({ success: true, msg: 'check withdraw Money one user' });
-};
+const withdrawMoneyOneUser = async (req, res, next) => {
+  try {
+    const user = await UserSchema.findById(req.params.id);
+    const amount = req.body.amount;
+    if (!user || typeof amount !== 'number' || amount < 1 || amount > 50000) {
+      return res.status(400).json({ success: false });
+    }
 
+    if (user.cash < amount) {
+      const remainingAmount = amount - user.cash;
+      if (remainingAmount <= user.credit) {
+        user.credit -= remainingAmount;
+        user.cash = 0;
+      } else {
+        return res.status(400).json({ success: false, message: 'Insufficient funds' });
+      }
+    } else {
+      user.cash -= amount;
+    }
+    await user.save();
+    res.status(200).json({ success: true, amount: amount, balance: user.cash, credit: user.credit });
+
+
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
 
 router.route('/:id/withdraw').put(withdrawMoneyOneUser);
 
@@ -100,10 +165,40 @@ router.route('/:id/withdraw').put(withdrawMoneyOneUser);
 //  @route get /users/:id/transfer
 // Only number, remove cash first from user. If it reaches 0, then remove credit until it also reaches 0
 // prevent if both cash and credit are 0
-// select user by passport Id to increase their cash
+// select user by username to increase their cash
 
-const tranferFromOneUser = (req, res, next) => {
-  res.status(200).json({ success: true, msg: 'check tranfer from one user' });
+const tranferFromOneUser = async (req, res, next) => {
+  try {
+    const user = await UserSchema.findById(req.params.id);
+    const recievedUser = await UserSchema.findOne({ username: req.body.username });
+    const amount = req.body.amount;
+
+    if (!user || !recievedUser || typeof amount !== 'number' || amount < 1 || amount > 50000) {
+      return res.status(400).json({ success: false });
+    }
+
+    if (user.cash < amount) {
+      const remainingAmount = amount - user.cash;
+      if (remainingAmount <= user.credit) {
+        user.credit -= remainingAmount;
+        user.cash = 0;
+      } else {
+        return res.status(400).json({ success: false, message: 'Insufficient funds' });
+      }
+    } else {
+      user.cash -= amount;
+    }
+
+    recievedUser.cash += amount;
+
+    await user.save();
+    await recievedUser.save();
+    res.status(200).json({ success: true, amount: amount, senderBalance: user.cash, senderCredit: user.credit, recipientBalance: recievedUser.cash });
+
+
+  } catch (error) {
+    res.status(400).send(error);
+  }
 };
 
 
