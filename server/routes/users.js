@@ -84,11 +84,12 @@ router.route('/:id').get(getOneUser);
 const depositOneUser = async (req, res, next) => {
   try {
     const user = await UserSchema.findById(req.params.id);
-    const amount = req.body.amount;
+    console.log(req.params.id);
+    const amount = parseInt(req.body.amount);
 
     if (!user || typeof amount !== 'number' || amount < 1 || amount > 50000) {
-      // return res.status(400).json({ success: false });
-      return next(error);
+      return res.status(400).json({ success: false });
+
     }
 
 
