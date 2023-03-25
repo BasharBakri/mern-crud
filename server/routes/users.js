@@ -151,7 +151,7 @@ const withdrawMoneyOneUser = async (req, res, next) => {
         user.credit -= remainingAmount;
         user.cash = 0;
       } else {
-        return res.status(400).json({ success: false, message: 'Insufficient funds' });
+        return res.status(400).json({ message: 'Insufficient funds' });
       }
     } else {
       user.cash -= amount;

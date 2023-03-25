@@ -21,7 +21,6 @@ export default function User() {
     }
     getUser();
   }, []);
-  console.log(user);
 
 
 
@@ -31,29 +30,29 @@ export default function User() {
     <Card.Header>
       <Nav variant="tabs">
         <Nav.Item>
-          {/* <Nav.Link> */}
-          <Link to={`/users/${id}`}>Info</Link>
-          {/* </Nav.Link> */}
+          <Nav.Link disabled>
+            <Link to={`/users/${id}`}>Info</Link>
+          </Nav.Link>
         </Nav.Item>
         <Nav.Item>
-          {/* <Nav.Link> */}
-          <Link to={`/users/${id}/deposit`}>Deposit</Link>
-          {/* </Nav.Link> */}
+          <Nav.Link>
+            <Link to={`/users/${id}/deposit`}>Deposit</Link>
+          </Nav.Link>
         </Nav.Item>
         <Nav.Item>
-          {/* <Nav.Link> */}
-          <Link to="addCredit">Add Credit</Link>
-          {/* </Nav.Link> */}
+          <Nav.Link>
+            <Link to="addCredit">Add Credit</Link>
+          </Nav.Link>
         </Nav.Item>
         <Nav.Item>
-          {/* <Nav.Link> */}
-          <Link to="withdraw">Withdraw</Link>
-          {/* </Nav.Link> */}
+          <Nav.Link>
+            <Link to="withdraw">Withdraw</Link>
+          </Nav.Link>
         </Nav.Item>
         <Nav.Item>
-          {/* <Nav.Link> */}
-          <Link to="transfer">Transfer</Link>
-          {/* </Nav.Link> */}
+          <Nav.Link>
+            <Link to="transfer">Transfer</Link>
+          </Nav.Link>
         </Nav.Item>
       </Nav>
     </Card.Header>
