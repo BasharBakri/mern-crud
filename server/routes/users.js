@@ -64,7 +64,7 @@ const getOneUser = async (req, res, next) => {
       return next(error);
 
     }
-    res.status(200).json({ success: true, data: user });
+    res.status(200).json({ data: user });
 
   } catch (error) {
     // res.status(400).send(error);
