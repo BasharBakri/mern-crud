@@ -2,6 +2,10 @@ const express = require('express');
 const dotenv = require('dotenv');
 const path = require('path');
 const connectDB = require('./config/db');
+
+
+// load env variables
+
 dotenv.config({ path: path.join(__dirname, '/config/config.env') });
 
 
@@ -14,7 +18,6 @@ connectDB();
 const users = require(path.join(__dirname, 'routes', 'users.js'));
 const logger = require(path.join(__dirname, 'middleware', 'logger.js'));
 
-// load env variables
 
 
 
@@ -22,7 +25,17 @@ const logger = require(path.join(__dirname, 'middleware', 'logger.js'));
 
 
 const app = express();
-// body parser middle wear MUST BE FIRST
+
+// cors for vite local host
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:5173");
+  res.header("Access-Control-Allow-Headers", "*");
+
+  next();
+});
+
+
+// body parser middle wear 
 app.use(express.json());
 
 app.use(logger);

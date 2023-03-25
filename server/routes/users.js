@@ -14,7 +14,7 @@ const getUsers = async (req, res, next) => {
   try {
     const users = await UserSchema.find();
 
-    res.status(200).json({ success: true, data: users });
+    res.status(200).json({ data: users });
   } catch (error) {
     res.status(400).json({ success: false });
   }
@@ -27,7 +27,6 @@ router.route('/').get(getUsers);
 //  @route Post /users
 // 2. When fetching users, make sure they exist wtf does that mean
 // no duplicates allowed 
-// default 0 cash 0 credit
 // form Input in client: {username: string}
 // navigate to all users table after form submit
 
@@ -35,7 +34,7 @@ const addUser = async (req, res, next) => {
   console.log(req.body);
 
   try {
-    const newUser = { ...req.body, cash: 0, credit: 0, isActive: true };
+    const newUser = { ...req.body, cash: 0, credit: 0, passportId: Math.floor((Math.random() * 1000000000) + 1), isActive: true };
     const addedUser = await UserSchema.create(newUser);
 
     res.status(201).json({ // 201 means create a resource
