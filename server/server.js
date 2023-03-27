@@ -2,7 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const path = require('path');
 const connectDB = require('./config/db');
-
+const dist = path.join(__dirname, "..", "client", "dist");
 
 // load env variables
 
@@ -41,13 +41,22 @@ app.use(express.json());
 app.use(logger);
 
 
+app.use(express.static(dist));
 
 
 app.use('/users', users);
 
+
+app.get('/', (req, res) => {
+  res.sendFile(dist + '/index.html');
+});
+
+
 const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, console.log(PORT));
+
+
 
 
 

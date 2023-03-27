@@ -19,6 +19,8 @@ router.route('/:id/withdraw').put(withdrawMoneyOneUser);
 
 router.route('/:id/transfer').put(tranferFromOneUser);
 
+router.route('/:id/deposit').get(getOneUser);
+
 
 
 module.exports = router;

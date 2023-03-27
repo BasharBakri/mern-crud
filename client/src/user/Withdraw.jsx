@@ -7,14 +7,16 @@ export default function Withdraw() {
   const inputRef = useRef(0);
 
   function handleSubmit(event) {
-
+    // event.preventDefault();
     const requestOptions = {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ amount: parseInt(inputRef.current.value) })
     };
 
-    fetch(`http://localhost:5000/users/${id}/withdraw`, requestOptions);
+    fetch(`http://localhost:5000/users/${id}/withdraw`, requestOptions).then((res) => res.json()).then((res) => {
+      console.log(res);
+    });
   }
 
   return (<>
