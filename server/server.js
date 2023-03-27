@@ -2,7 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const path = require('path');
 const connectDB = require('./config/db');
-const dist = path.join(__dirname, "..", "client", "dist");
+const dist = path.join(__dirname, ".", "dist");
 
 // load env variables
 
