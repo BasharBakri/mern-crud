@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Form } from "react-router-dom";
 
 export default function Withdraw() {
   const { id } = useParams();
@@ -14,7 +14,7 @@ export default function Withdraw() {
       body: JSON.stringify({ amount: parseInt(inputRef.current.value) })
     };
 
-    fetch(`http://localhost:5000/users/${id}/withdraw`, requestOptions).then((res) => res.json()).then((res) => {
+    fetch(`http://localhost:5000/api/users/${id}/withdraw`, requestOptions).then((res) => res.json()).then((res) => {
       console.log(res);
     });
   }
@@ -22,7 +22,7 @@ export default function Withdraw() {
   return (<>
     <br></br>
     <div> withdraw cash then credit: {id}</div>
-    <form onSubmit={handleSubmit}>
+    <form method="post" onSubmit={handleSubmit}>
       <br></br>
       <label>
         Amount:

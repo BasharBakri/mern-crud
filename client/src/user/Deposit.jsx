@@ -16,7 +16,7 @@ export default function Deposit() {
       body: JSON.stringify({ amount: parseInt(inputRef.current.value) })
     };
 
-    fetch(`http://localhost:5000/users/${id}/deposit`, requestOptions)
+    fetch(`http://localhost:5000/api/users/${id}/deposit`, requestOptions)
       .then(response => console.log(response))
       .then(data => console.log(data))
       .catch(error => console.log("error", error));

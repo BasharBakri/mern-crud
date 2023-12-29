@@ -15,7 +15,7 @@ export default function Transfer() {
     };
 
     try {
-      const response = await fetch(`http://localhost:5000/users/${id}/transfer`, requestOptions);
+      const response = await fetch(`http://localhost:5000/api/users/${id}/transfer`, requestOptions);
       const msg = await response.json();
       console.log(msg);
     } catch (error) {

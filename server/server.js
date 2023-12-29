@@ -2,7 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const path = require('path');
 const connectDB = require('./config/db');
-const dist = path.join(__dirname, ".", "dist");
+const dist = path.join(__dirname, "..", "client", "dist");
 
 // load env variables
 
@@ -44,7 +44,7 @@ app.use(logger);
 app.use(express.static(dist));
 
 
-app.use('/users', users);
+app.use('/api/users', users);
 
 
 app.get('/', (req, res) => {

@@ -12,7 +12,7 @@ function Users() {
   function handleSubmit(event) {
     async function postUser() {
       try {
-        const response = await axios.post("http://localhost:5000/users/", { username: inputRef.current.value });
+        const response = await axios.post("http://localhost:5000/api/users/", { username: inputRef.current.value });
         console.log(response);
       } catch (error) {
         console.log("error", error);

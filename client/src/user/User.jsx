@@ -11,7 +11,7 @@ export default function User() {
   useEffect(function () {
     async function getUser() {
       try {
-        const response = await fetch(`http://localhost:5000/users/${id}`);
+        const response = await fetch(`http://localhost:5000/api/users/${id}`);
         const data = await response.json();
 
         setUser(data.data);

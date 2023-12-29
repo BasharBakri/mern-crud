@@ -10,7 +10,7 @@ function BasicTable() {
   useEffect(function () {
     async function getUsers() {
       try {
-        const response = await fetch("http://localhost:5000/users/");
+        const response = await fetch("http://localhost:5000/api/users/");
         const data = await response.json();
         setUsers(data.data);
       } catch (error) {
